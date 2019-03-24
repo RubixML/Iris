@@ -1,0 +1,5 @@
+/vendor
+composer.lock
+report.json
+.vscode
+.vs
