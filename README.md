@@ -22,7 +22,7 @@ $ composer install
 - [PHP](https://php.net) 7.1.3 or above
 
 ## Tutorial
-The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments (sepal length, sepal width, petal length, and petal width) which are used by the K Nearest Neighbors classifier to determine the *distance* between samples. KNN works by inferring an unknown sample's label based on its k nearest neighbors from the training set.
+The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurements (sepal length, sepal width, petal length, and petal width) which are used by the K Nearest Neighbors classifier to determine the *distance* between samples. KNN works by inferring an unknown sample's label based on its k nearest neighbors from the training set.
 
 Before we can train the K Nearest Neighbors learner, we need to import the data from `dataset.csv` into a [Labeled](https://github.com/RubixML/RubixML#labeled) dataset object. We'll use the League of Extraordinary PHP packages' [CSV Reader](https://csv.thephpleague.com/) to help us import the data.
 
@@ -42,7 +42,7 @@ $labels = $reader->fetchColumn('class');
 $dataset = Labeled::fromIterator($samples, $labels);
 ```
 
-Since the data is imported as strings by default, we'll need to convert the features to their numerical counterparts so they can be measured by the distance function. Luckily, Rubix provides a transformer that can be applied directly to the newly instantiated dataset object that will handle this for us.
+Since the data are imported as strings by default, we'll need to convert the features to their numerical counterparts so that they can be measured by the distance function. Luckily, Rubix provides a transformer that can be applied directly to the newly instantiated dataset object that will handle this for us.
 
 ```php
 use Rubix\ML\Transformers\NumericStringConverter;
