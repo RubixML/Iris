@@ -6,8 +6,6 @@ use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Kernels\Distance\Euclidean;
 use Rubix\ML\Classifiers\KNearestNeighbors;
 use Rubix\ML\Transformers\NumericStringConverter;
-use Rubix\ML\CrossValidation\Reports\AggregateReport;
-use Rubix\ML\CrossValidation\Reports\ConfusionMatrix;
 use Rubix\ML\CrossValidation\Reports\MulticlassBreakdown;
 use League\Csv\Reader;
 
@@ -43,10 +41,7 @@ $estimator->train($training);
 
 $predictions = $estimator->predict($testing);
 
-$report = new AggregateReport([
-    new MulticlassBreakdown(),
-    new ConfusionMatrix(),
-]);
+$report = new MulticlassBreakdown();
 
 $results = $report->generate($predictions, $testing->labels());
 
