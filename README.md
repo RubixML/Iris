@@ -22,7 +22,7 @@ $ composer install
 - [PHP](https://php.net) 7.1.3 or above
 
 ## Tutorial
-The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments (sepal length, sepal width, petal length, and petal width) which are used by the K Nearest Neighbors classifier to determine the *distance* between samples. KNN works by inferring an unknown sample's label based on its k nearest neighbors from the training set.
+Machine Learning is all about using *data* to indirectly program a learner. The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments or *features* (sepal length, sepal width, petal length, and petal width) which are used by the K Nearest Neighbors classifier to determine the *distance* between samples. KNN works by inferring an unknown sample's label based on its k nearest neighbors from the training set.
 
 Before we can train the K Nearest Neighbors learner, we need to import the data from `dataset.csv` into a [Labeled](https://github.com/RubixML/RubixML#labeled) dataset object. We'll use the League of Extraordinary PHP packages' [CSV Reader](https://csv.thephpleague.com/) to help us import the data.
 
@@ -86,6 +86,61 @@ $report = new MulticlassBreakdown();
 
 $results = $report->generate($predictions, $testing->labels());
 ```
+
+Now you can analyze the results by dumping the contents of the returned array to the screen or to a file.
+
+##### Example:
+
+```json
+{
+    "overall": {
+        "accuracy": 0.9777777777777779,
+        "precision": 0.9696969696969697,
+        "recall": 0.9666666666666666,
+        "specificity": 0.9833333333333332,
+        "negative_predictive_value": 0.984126984126984,
+        "false_discovery_rate": 0.030303030303030314,
+        "miss_rate": 0.033333333333333326,
+        "fall_out": 0.01666666666666668,
+        "false_omission_rate": 0.01587301587301589,
+        "f1_score": 0.9665831244778613,
+        "mcc": 0.9517134923523789,
+        "informedness": 0.95,
+        "markedness": 0.9538239538239537,
+        "true_positives": 29,
+        "true_negatives": 58,
+        "false_positives": 1,
+        "false_negatives": 1,
+        "cardinality": 30,
+        "density": 1
+    },
+    "label": {
+        "Iris-versicolor": {
+            "accuracy": 0.9666666666666667,
+            "precision": 0.9090909090909091,
+            "recall": 1,
+            "specificity": 0.95,
+            "negative_predictive_value": 1,
+            "false_discovery_rate": 0.09090909090909094,
+            "miss_rate": 0,
+            "fall_out": 0.050000000000000044,
+            "false_omission_rate": 0,
+            "f1_score": 0.9523809523809523,
+            "mcc": 0.929320377284585,
+            "informedness": 0.95,
+            "markedness": 0.9090909090909092,
+            "true_positives": 10,
+            "true_negatives": 19,
+            "false_positives": 1,
+            "false_negatives": 0,
+            "cardinality": 10,
+            "density": 0.3333333333333333
+        },
+    },
+}
+```
+
+Congratualtions on completing the introduction to machine learning in PHP with Rubix ML. Now you're ready to experiment on your. We highly recommend browsing the [API reference](https://github.com/RubixML/RubixML#api-reference) to get a feel for the components of the system. We have more tutorials and example projects for you to learn on our [GitHub page](https://github.com/RubixML).
 
 ## Original Dataset
 Creator: Ronald Fisher
