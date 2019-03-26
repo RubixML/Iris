@@ -42,7 +42,7 @@ $labels = $reader->fetchColumn('class');
 $dataset = Labeled::fromIterator($samples, $labels);
 ```
 
-Since the data is imported as strings by default, we'll need to convert the features to their numerical counterparts so they can be measured by the distance function. Luckily, Rubix provides a transformer that can be applied directly to the newly instantiated dataset object that will handle this for us.
+Since the data are imported as strings by default, we'll need to convert the features to their numerical counterparts so that they can be measured by the distance function. Luckily, Rubix provides a transformer that can be applied directly to the newly instantiated dataset object that will handle this for us.
 
 ```php
 use Rubix\ML\Transformers\NumericStringConverter;
