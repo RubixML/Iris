@@ -3,17 +3,17 @@
 This is an introduction to machine learning in Rubix ML using the famous [Iris dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set) and the [K Nearest Neighbors classifier](https://github.com/RubixML/RubixML#k-nearest-neighbors). In this tutorial, you'll learn how structure a Rubix ML project, define a learner, and train it to make predictions on a testing portion of the dataset.
 
 - **Difficulty**: Easy
-- **Training time**: Short
+- **Training time**: < 1 Minute
 - **Memory needed**: < 1G
 
 ## Installation
 
-Clone the repository locally:
+Clone the repository locally using [Git](https://git-scm.com/):
 ```sh
 $ git clone https://github.com/RubixML/Iris
 ```
 
-Install dependencies:
+Install dependencies using [Composer](https://getcomposer.org/):
 ```sh
 $ composer install
 ```
@@ -22,9 +22,12 @@ $ composer install
 - [PHP](https://php.net) 7.1.3 or above
 
 ## Tutorial
-Machine Learning is all about using *data* to indirectly program a learner. The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments or *features* (sepal length, sepal width, petal length, and petal width) which are used by the K Nearest Neighbors classifier to determine the *distance* between samples. KNN works by inferring an unknown sample's label based on its k nearest neighbors from the training set.
+Machine Learning is all about using *data* to indirectly program a learner. The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments or *features* (sepal length, sepal width, petal length, and petal width) which are used by the [K Nearest Neighbors](https://github.com/RubixML/RubixML#k-nearest-neighbors) classifier to determine the *distance* between samples. KNN works by inferring an unknown sample's label based on its k nearest neighbors from the training set.
 
+### Training
 Before we can train the K Nearest Neighbors learner, we need to import the data from `dataset.csv` into a [Labeled](https://github.com/RubixML/RubixML#labeled) dataset object. We'll use the League of Extraordinary PHP packages' [CSV Reader](https://csv.thephpleague.com/) to help us import the data.
+
+> Source code can be found in the [train.php](https://github.com/RubixML/Iris/blob/master/train.php) file in project root.
 
 ```php
 use Rubix\ML\Datasets\Labeled;
@@ -50,10 +53,10 @@ use Rubix\ML\Transformers\NumericStringConverter;
 $dataset->apply(new NumericStringConverter());
 ```
 
-When training a machine learning model, it is important to set *some* of the data aside for testing purposes. By splitting the dataset into training and testing sets, we gain the ability to test the model on data it has never seen before, thus measuring its generalization abilities. Since we have discrete class labels, we can perform a *stratified* split that ensures that each subset of the dataset contains proportional counts of each label. Optionally, we randomize the dataset first to ensure that sample order does not effect the training of the learner.
+When training a machine learning model, it is important to set *some* of the data aside for testing purposes. By splitting the dataset into training and testing sets, we gain the ability to test the model on data it has never seen before, thus measuring its generalization abilities. Since we have discrete class labels, we can perform a *stratified* split that ensures that each subset of the dataset contains proportional counts of each label. Optionally, we can randomize the dataset first to ensure that sample order does not effect the training of the learner.
 
 ```php
-[$training, $testing] = $dataset->randomize()->stratifiedSplit(0.80);
+[$training, $testing] = $dataset->randomize()->stratifiedSplit(0.8);
 ```
 
 Next we define our estimator instance with the chosen hyper-parameters. Hyper-parameters are estimator constructor parameters that influence the way the estimator learns and performs inference. K Nearest Neighbors has 2 hyper-parameters that we will consider for this tutorial - the number of nearest neighbors to consider given by *k* and the kernel distance function used to measure the distance between samples. We'll choose to use the 5 nearest neighbors and standard [Euclidean](https://github.com/RubixML/RubixML#euclidean) distance for now, but feel free to experiement with other settings. For example, you could instead choose the 3 nearest neighbors under the [Manhattan](https://github.com/RubixML/RubixML#manhattan) distance.
@@ -88,8 +91,6 @@ $results = $report->generate($predictions, $testing->labels());
 ```
 
 Now you can analyze the results by dumping the contents of the returned array to the screen or to a file.
-
-##### Example:
 
 ```json
 {
