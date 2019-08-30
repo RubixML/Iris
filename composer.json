@@ -6,7 +6,7 @@
     "license": "MIT",
     "keywords": [
         "php", "machine", "learning", "data", "science", "mining", "predictive", "modeling",
-        "ai", "ml", "classification", "k-nearest-neighbors", "iris", "dataset"
+        "ai", "ml", "classification", "k-nearest-neighbors", "iris", "dataset", "tutorial"
     ],
     "authors": [
         {
@@ -19,7 +19,7 @@
     "require": {
         "php": ">=7.1.3",
         "league/csv": "^9.1",
-        "rubix/ml": "^0.0.14-beta"
+        "rubix/ml": "^0.0.15-beta"
     },
     "config": {
         "preferred-install": "dist",

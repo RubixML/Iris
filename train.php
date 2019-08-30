@@ -3,13 +3,10 @@
 include __DIR__ . '/vendor/autoload.php';
 
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Kernels\Distance\Euclidean;
 use Rubix\ML\Classifiers\KNearestNeighbors;
 use Rubix\ML\Transformers\NumericStringConverter;
-use Rubix\ML\CrossValidation\Reports\MulticlassBreakdown;
+use Rubix\ML\CrossValidation\Metrics\Accuracy;
 use League\Csv\Reader;
-
-const REPORT_FILE = 'report.json';
 
 echo '╔═══════════════════════════════════════════════════════════════╗' . PHP_EOL;
 echo '║                                                               ║' . PHP_EOL;
@@ -33,18 +30,21 @@ $dataset = Labeled::fromIterator($samples, $labels);
 
 $dataset->apply(new NumericStringConverter());
 
-[$training, $testing] = $dataset->randomize()->stratifiedSplit(0.80);
+$testing = $dataset->randomize()->take(10);
 
-$estimator = new KNearestNeighbors(5, new Euclidean());
+$estimator = new KNearestNeighbors(5);
 
-$estimator->train($training);
+$estimator->train($dataset);
+
+$metric = new Accuracy();
 
 $predictions = $estimator->predict($testing);
 
-$report = new MulticlassBreakdown();
+echo 'Example predictions:' . PHP_EOL;
 
-$results = $report->generate($predictions, $testing->labels());
+print_r(array_slice($predictions, 0, 3));
 
-file_put_contents(REPORT_FILE, json_encode($results, JSON_PRETTY_PRINT));
+$score = $metric->score($predictions, $testing->labels());
 
-echo 'Report saved to ' . REPORT_FILE . PHP_EOL;
+echo "Accuracy: $score" . PHP_EOL;
+

@@ -1,13 +1,12 @@
 # Iris Flower Classifier
 
-This is an introduction to machine learning in Rubix ML using the famous [Iris dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set) and the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) classifier. In this tutorial, you'll learn how structure a Rubix ML project, define a learner, and train it to make predictions on a testing portion of the dataset.
+This is an introduction to machine learning in Rubix ML using the famous [Iris dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set) and the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) algorithm. In this tutorial, you'll learn how structure a  project, instantiate a learner, and train it to make predictions on a testing portion of the dataset.
 
 - **Difficulty**: Easy
 - **Training time**: < 1 Minute
 - **Memory needed**: < 1G
 
 ## Installation
-
 Clone the repository locally using [Git](https://git-scm.com/):
 ```sh
 $ git clone https://github.com/RubixML/Iris
@@ -22,15 +21,14 @@ $ composer install
 - [PHP](https://php.net) 7.1.3 or above
 
 ## Tutorial
-Machine Learning is all about using *data* to indirectly program a learner. The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments or *features* (sepal length, sepal width, petal length, and petal width) which are used by the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) classifier to determine the *distance* between samples. KNN works by inferring an unknown sample's label based on its k nearest neighbors from the training set.
+The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments or *features* - sepal length, sepal width, petal length, and petal width. Our objective is to train a K Nearest Neighbors classifier to determine the species of a set of unknown samples. KNN is an intuitive algorithm that is easy to understand for most beginners. Let's get started!
 
 ### Training
-Before we can train the K Nearest Neighbors learner, we need to import the data from `dataset.csv` into a [Labeled](https://docs.rubixml.com/en/latest/datasets/labeled.html) dataset object. We'll use the League of Extraordinary PHP packages' [CSV Reader](https://csv.thephpleague.com/) to help us import the data.
+Before we can train the K Nearest Neighbors learner, we need to import the data from `dataset.csv` into a dataset object. We'll use the League of Extraordinary PHP packages' [CSV Reader](https://csv.thephpleague.com/) to help us import the data. The return values of the `getRecords()` and `fetchColumn()` methods are iterators which we'll load into a [Labeled](https://docs.rubixml.com/en/latest/datasets/labeled.html) dataset.
 
-> Source code can be found in the [train.php](https://github.com/RubixML/Iris/blob/master/train.php) file in project root.
+> **Note:** The source code for this example can be found in the [train.php](https://github.com/RubixML/Iris/blob/master/train.php) file in project root.
 
 ```php
-use Rubix\ML\Datasets\Labeled;
 use League\Csv\Reader;
 
 $reader = Reader::createFromPath(__DIR__ . '/dataset.csv')
@@ -41,11 +39,17 @@ $samples = $reader->getRecords([
 ]);
 
 $labels = $reader->fetchColumn('class');
+```
+
+Then load the samples and labels into a Labeled dataset object by passing them to the `fromIterator()` static factory method.
+
+```php
+use Rubix\ML\Datasets\Labeled;
 
 $dataset = Labeled::fromIterator($samples, $labels);
 ```
 
-Since the data are imported as strings by default, we'll need to convert the features to their numerical counterparts so that they can be measured by the distance function. Luckily, Rubix provides a transformer that can be applied directly to the newly instantiated dataset object that will handle this for us.
+Since the data from CSV are imported as string types by default, we'll need to convert those features to their numerical representations before proceeding. Luckily, Rubix ML provides a transformer that can be applied directly to the newly instantiated dataset object that will handle this for us.
 
 ```php
 use Rubix\ML\Transformers\NumericStringConverter;
@@ -53,95 +57,52 @@ use Rubix\ML\Transformers\NumericStringConverter;
 $dataset->apply(new NumericStringConverter());
 ```
 
-When training a machine learning model, it is important to set *some* of the data aside for testing purposes. By splitting the dataset into training and testing sets, we gain the ability to test the model on data it has never seen before, thus measuring its generalization abilities. Since we have discrete class labels, we can perform a *stratified* split that ensures that each subset of the dataset contains proportional counts of each label. Optionally, we can randomize the dataset first to ensure that sample order does not effect the training of the learner.
+Before we train the learner, we'll set 10 random samples aside that we'll later use to make some example predictions and score the model. The `randomize()` method on the dataset object will handle shuffling the data while `take()` pulls the first n rows from the dataset and puts them into a separate dataset object. For this example, we'll use 10 of the 150 samples for our testing set.
 
 ```php
-[$training, $testing] = $dataset->randomize()->stratifiedSplit(0.8);
+$testing = $dataset->randomize()->take(10);
 ```
 
-Next we define our estimator instance with the chosen hyper-parameters. Hyper-parameters are estimator constructor parameters that influence the way the estimator learns and performs inference. K Nearest Neighbors has 2 hyper-parameters that we will consider for this tutorial - the number of nearest neighbors to consider given by *k* and the kernel distance function used to measure the distance between samples. We'll choose to use the 5 nearest neighbors and standard [Euclidean](https://docs.rubixml.com/en/latest/kernels/distance/euclidean.html) distance for now, but feel free to experiement with other settings. For example, you could instead choose the 3 nearest neighbors under the [Manhattan](https://docs.rubixml.com/en/latest/kernels/distance/manhattan.html) distance.
+Next we'll instantiate the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) classifier instance. KNN is a distance-based algorithm that finds the k closest samples from the training set and takes the most frequent label as the prediction. For example, if we choose k equal to 5, then we may get 4 labels that are Iris-setosa and 1 labeled Iris-versicolor. In this case, the estimator would predict Iris-setosa with a 80% certainty.
 
 ```php
 use Rubix\ML\Classifiers\KNearestNeighbors;
-use Rubix\ML\Kernels\Distance\Euclidean;
 
-$estimator = new KNearestNeighbors(5, new Euclidean());
+$estimator = new KNearestNeighbors(5);
 ```
 
-Now, we're ready to train our learner with the training set. Simply pass the dataset object to the `train()` method on the newly instantiated estimator.
+The constructor parameter k is an example of a *hyper-parameter*. Hyper-parameters are constructor parameters that effect the behavior of the learner during training and inference. Refer to the documentation for more information on KNN's additional hyper-parameters.
+
+Now we're ready to train the learner with the training set by calling the `train()` method on the learner instance.
 
 ```php
-$estimator->train($training);
+$estimator->train($dataset);
 ```
 
-Once the estimator has been trained, we can use it to make predictions on the rest of the data in the testing set. To return an array of predictions, pass the testing dataset object to the `predict()` method of the estimator. 
+Then make the predictions on the testing portion of the dataset that we set aside earlier by calling `predict()`.
 
 ```php
 $predictions = $estimator->predict($testing);
 ```
 
-We measure the performance of our model by outputting a report based on the predictions and the ground truth from the testing set. The [Multiclass Breakdown](https://docs.rubixml.com/en/latest/cross-validation/reports/multiclass-breakdown.html) report gives us a detailed look at how the estimator performed at classifying each sample by label.
+Lastly, we can test the model by comparing the predictions to the ground truth labels from the testing set. We'll use the [Accuracy](https://docs.rubixml.com/en/latest/cross-validation/metrics/accuracy.html) metric to output a score that we'll use to interpret the generalization ability of our newly trained estimator.
 
 ```php
-use Rubix\ML\CrossValidation\Reports\MulticlassBreakdown;
+use Rubix\ML\CrossValidation\Metrics\Accuracy;
 
-$report = new MulticlassBreakdown();
+$metric = new Accuracy();
 
-$results = $report->generate($predictions, $testing->labels());
+$score = $metric->score($predictions, $testing->labels());
 ```
 
-Now you can analyze the results by dumping the contents of the returned array to the screen or to a file.
+### Wrap Up
+- Samples and labels are passed in Rubix ML using containers called [Dataset](https://docs.rubixml.com/en/latest/datasets/api.html) objects.
+- The [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) algorithm searches for the k closest samples from the training set and predicts the most frequent label.
+- A hyper-parameter is a setting that alters the behavior of a learning algorithm.
+- It is important to test the learner on a separate testing set if you want to test its generalization ability.
 
-```json
-{
-    "overall": {
-        "accuracy": 0.9777777777777779,
-        "precision": 0.9696969696969697,
-        "recall": 0.9666666666666666,
-        "specificity": 0.9833333333333332,
-        "negative_predictive_value": 0.984126984126984,
-        "false_discovery_rate": 0.030303030303030314,
-        "miss_rate": 0.033333333333333326,
-        "fall_out": 0.01666666666666668,
-        "false_omission_rate": 0.01587301587301589,
-        "f1_score": 0.9665831244778613,
-        "mcc": 0.9517134923523789,
-        "informedness": 0.95,
-        "markedness": 0.9538239538239537,
-        "true_positives": 29,
-        "true_negatives": 58,
-        "false_positives": 1,
-        "false_negatives": 1,
-        "cardinality": 30,
-        "density": 1
-    },
-    "label": {
-        "Iris-versicolor": {
-            "accuracy": 0.9666666666666667,
-            "precision": 0.9090909090909091,
-            "recall": 1,
-            "specificity": 0.95,
-            "negative_predictive_value": 1,
-            "false_discovery_rate": 0.09090909090909094,
-            "miss_rate": 0,
-            "fall_out": 0.050000000000000044,
-            "false_omission_rate": 0,
-            "f1_score": 0.9523809523809523,
-            "mcc": 0.929320377284585,
-            "informedness": 0.95,
-            "markedness": 0.9090909090909092,
-            "true_positives": 10,
-            "true_negatives": 19,
-            "false_positives": 1,
-            "false_negatives": 0,
-            "cardinality": 10,
-            "density": 0.3333333333333333
-        },
-    },
-}
-```
-
-Congratualtions on completing the introduction to machine learning in PHP with Rubix ML. Now you're ready to experiment on your. We highly recommend browsing the [docs](https://docs.rubixml.com/en/latest/) to get a feel for the components of the system. We have more tutorials and example projects for you to learn on our [GitHub page](https://github.com/RubixML).
+## Next Steps
+Congratulations on completing the introduction to machine learning in PHP with Rubix ML. Now you're ready to experiment on your own. We highly recommend browsing the [docs](https://docs.rubixml.com/en/latest/) and taking a look at the tutorials and example projects on our [GitHub page](https://github.com/RubixML). Feel free to post a question if you need help.
 
 ## Original Dataset
 Creator: Ronald Fisher
