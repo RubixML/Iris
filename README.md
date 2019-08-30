@@ -23,6 +23,8 @@ $ composer install
 ## Tutorial
 The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments or *features* - sepal length, sepal width, petal length, and petal width. Our objective is to train a K Nearest Neighbors classifier to determine the species of a set of unknown samples. KNN is an intuitive algorithm that is easy to understand for most beginners. Let's get started!
 
+![Iris Species](https://raw.githubusercontent.com/RubixML/Iris/master/docs/images/iris-species.png)
+
 ### Training
 Before we can train the K Nearest Neighbors learner, we need to import the data from `dataset.csv` into a dataset object. We'll use the League of Extraordinary PHP packages' [CSV Reader](https://csv.thephpleague.com/) to help us import the data. The return values of the `getRecords()` and `fetchColumn()` methods are iterators which we'll load into a [Labeled](https://docs.rubixml.com/en/latest/datasets/labeled.html) dataset.
 
