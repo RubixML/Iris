@@ -1,6 +1,5 @@
 # Iris Flower Classifier
-
-This is an introduction to machine learning in Rubix ML using the famous [Iris dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set) and the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) algorithm. In this tutorial, you'll learn how structure a  project, instantiate a learner, and train it to make predictions on a testing portion of the dataset.
+This is a lightweight introduction to machine learning in Rubix ML using the famous [Iris dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set) and the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) algorithm. In this tutorial, you'll learn how structure a  project, instantiate a learner, and train it to make predictions on a testing portion of the dataset.
 
 - **Difficulty**: Easy
 - **Training time**: < 1 Minute
@@ -21,11 +20,13 @@ $ composer install
 - [PHP](https://php.net) 7.1.3 or above
 
 ## Tutorial
+
+### Introduction
 The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments or *features* - sepal length, sepal width, petal length, and petal width. Our objective is to train a K Nearest Neighbors classifier to determine the species of a set of unknown samples. KNN is an intuitive algorithm that is easy to understand for most beginners. Let's get started!
 
 ![Iris Species](https://raw.githubusercontent.com/RubixML/Iris/master/docs/images/iris-species.png)
 
-### Training
+### Extracting the Data
 Before we can train the K Nearest Neighbors learner, we need to import the data from `dataset.csv` into a dataset object. We'll use the League of Extraordinary PHP packages' [CSV Reader](https://csv.thephpleague.com/) to help us import the data. The return values of the `getRecords()` and `fetchColumn()` methods are iterators which we'll load into a [Labeled](https://docs.rubixml.com/en/latest/datasets/labeled.html) dataset.
 
 > **Note:** The source code for this example can be found in the [train.php](https://github.com/RubixML/Iris/blob/master/train.php) file in project root.
@@ -43,6 +44,7 @@ $samples = $reader->getRecords([
 $labels = $reader->fetchColumn('class');
 ```
 
+### Dataset Preparation
 Then load the samples and labels into a Labeled dataset object by passing them to the `fromIterator()` static factory method.
 
 ```php
@@ -65,7 +67,8 @@ Before we train the learner, we'll set 10 random samples aside that we'll later 
 $testing = $dataset->randomize()->take(10);
 ```
 
-Next we'll instantiate the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) classifier instance. KNN is a distance-based algorithm that finds the k closest samples from the training set and takes the most frequent label as the prediction. For example, if we choose k equal to 5, then we may get 4 labels that are Iris-setosa and 1 labeled Iris-versicolor. In this case, the estimator would predict Iris-setosa with a 80% certainty.
+### Instantiating the Learner
+Next we'll instantiate the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) classifier instance. KNN is a distance-based algorithm that finds the k closest samples from the training set and takes the most frequent label as the prediction. For example, if we choose k equal to 5, then we may get 4 labels that are Iris-setosa and 1 labeled Iris-virginica. In this case, the estimator would predict Iris-setosa with a 80% certainty.
 
 ```php
 use Rubix\ML\Classifiers\KNearestNeighbors;
@@ -75,18 +78,21 @@ $estimator = new KNearestNeighbors(5);
 
 The constructor parameter k is an example of a *hyper-parameter*. Hyper-parameters are constructor parameters that effect the behavior of the learner during training and inference. Refer to the documentation for more information on KNN's additional hyper-parameters.
 
+### Training
 Now we're ready to train the learner with the training set by calling the `train()` method on the learner instance.
 
 ```php
 $estimator->train($dataset);
 ```
 
+### Inference
 Then make the predictions on the testing portion of the dataset that we set aside earlier by calling `predict()`.
 
 ```php
 $predictions = $estimator->predict($testing);
 ```
 
+### Validation Score
 Lastly, we can test the model by comparing the predictions to the ground truth labels from the testing set. We'll use the [Accuracy](https://docs.rubixml.com/en/latest/cross-validation/metrics/accuracy.html) metric to output a score that we'll use to interpret the generalization ability of our newly trained estimator.
 
 ```php
@@ -103,7 +109,7 @@ $score = $metric->score($predictions, $testing->labels());
 - A hyper-parameter is a setting that alters the behavior of a learning algorithm.
 - It is important to test the learner on a separate testing set if you want to test its generalization ability.
 
-## Next Steps
+### Next Steps
 Congratulations on completing the introduction to machine learning in PHP with Rubix ML. Now you're ready to experiment on your own. We highly recommend browsing the [docs](https://docs.rubixml.com/en/latest/) and taking a look at the tutorials and example projects on our [GitHub page](https://github.com/RubixML). Feel free to post a question if you need help.
 
 ## Original Dataset
