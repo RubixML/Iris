@@ -2,8 +2,8 @@
 This is a lightweight introduction to machine learning in Rubix ML using the famous [Iris dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set) and the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) algorithm. In this tutorial, you'll learn how structure a  project, instantiate a learner, and train it to make predictions on a testing portion of the dataset.
 
 - **Difficulty**: Easy
-- **Training time**: < 1 Minute
-- **Memory needed**: < 1G
+- **Training time**: Seconds
+- **Memory needed**: 1G
 
 ## Installation
 Clone the repository locally using [Git](https://git-scm.com/):
@@ -53,7 +53,7 @@ use Rubix\ML\Datasets\Labeled;
 $dataset = Labeled::fromIterator($samples, $labels);
 ```
 
-Since the data from CSV are imported as string types by default, we'll need to convert those features to their numerical representations before proceeding. Luckily, Rubix ML provides a transformer that can be applied directly to the newly instantiated dataset object that will handle this for us.
+Since the data from CSV are imported as string types by default, we'll need to convert those features to their numerical representations before proceeding. Luckily, Rubix ML provides the [Numeric String Converter](https://docs.rubixml.com/en/latest/transformers/numeric-string-converter.html) transformer that can be applied directly to the newly instantiated dataset object that will handle this for us.
 
 ```php
 use Rubix\ML\Transformers\NumericStringConverter;
@@ -68,7 +68,7 @@ $testing = $dataset->randomize()->take(10);
 ```
 
 ### Instantiating the Learner
-Next we'll instantiate the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) classifier instance. KNN is a distance-based algorithm that finds the k closest samples from the training set and takes the most frequent label as the prediction. For example, if we choose k equal to 5, then we may get 4 labels that are Iris-setosa and 1 labeled Iris-virginica. In this case, the estimator would predict Iris-setosa with a 80% certainty.
+Next we'll instantiate the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) classifier instance. KNN is a distance-based algorithm that finds the k closest samples from the training set and takes the most frequent label as the prediction. For example, if we choose k equal to 5, then we may get 4 labels that are Iris-setosa and 1 labeled Iris-virginica. In this case, the estimator would predict Iris-setosa with 80% certainty.
 
 ```php
 use Rubix\ML\Classifiers\KNearestNeighbors;
@@ -101,12 +101,21 @@ use Rubix\ML\CrossValidation\Metrics\Accuracy;
 $metric = new Accuracy();
 
 $score = $metric->score($predictions, $testing->labels());
+
+echo "Accuracy: $score" . PHP_EOL;
+```
+
+**Output**
+
+```sh
+Accuracy: 0.9
 ```
 
 ### Wrap Up
-- Samples and labels are passed in Rubix ML using containers called [Dataset](https://docs.rubixml.com/en/latest/datasets/api.html) objects.
+- Data can be extracted from a number of sources including CSV files and databases.
+- Samples and labels are passed in Rubix ML using specialized containers called [Dataset](https://docs.rubixml.com/en/latest/datasets/api.html) objects.
 - The [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) algorithm searches for the k closest samples from the training set and predicts the most frequent label.
-- A hyper-parameter is a setting that alters the behavior of a learning algorithm.
+- A hyper-parameter is a setting that alters the behavior of a learning algorithm such as k in the KNN learner.
 - It is important to test the learner on a separate testing set if you want to test its generalization ability.
 
 ### Next Steps
