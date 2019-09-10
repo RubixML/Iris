@@ -34,7 +34,7 @@ Before we can train the K Nearest Neighbors learner, we need to import the data 
 ```php
 use League\Csv\Reader;
 
-$reader = Reader::createFromPath(__DIR__ . '/dataset.csv')
+$reader = Reader::createFromPath('dataset.csv')
     ->setDelimiter(',')->setEnclosure('"')->setHeaderOffset(0);
 
 $samples = $reader->getRecords([
