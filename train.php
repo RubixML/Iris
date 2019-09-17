@@ -8,13 +8,6 @@ use Rubix\ML\Transformers\NumericStringConverter;
 use Rubix\ML\CrossValidation\Metrics\Accuracy;
 use League\Csv\Reader;
 
-echo '╔═══════════════════════════════════════════════════════════════╗' . PHP_EOL;
-echo '║                                                               ║' . PHP_EOL;
-echo '║ Iris Flower Classifier using K Nearest Neighbors              ║' . PHP_EOL;
-echo '║                                                               ║' . PHP_EOL;
-echo '╚═══════════════════════════════════════════════════════════════╝' . PHP_EOL;
-echo PHP_EOL;
-
 echo 'Loading data into memory ...' . PHP_EOL;
 
 $reader = Reader::createFromPath('dataset.csv')

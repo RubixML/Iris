@@ -1,4 +1,4 @@
-# Iris Flower Classifier
+# Rubix ML - Iris Flower Classifier
 This is a lightweight introduction to machine learning in Rubix ML using the famous [Iris dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set) and the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) algorithm. In this tutorial, you'll learn how structure a  project, instantiate a learner, and train it to make predictions on a testing portion of the dataset.
 
 - **Difficulty**: Easy
@@ -22,12 +22,12 @@ $ composer install
 ## Tutorial
 
 ### Introduction
-The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris-virginica, and Iris-versicolor. Each sample is comprised of 4 measurments or *features* - sepal length, sepal width, petal length, and petal width. Our objective is to train a K Nearest Neighbors classifier to determine the species of a set of unknown samples. KNN is an intuitive algorithm that is easy to understand for most beginners. Let's get started!
+The Iris dataset consists of 50 samples from each of three species of Iris flower - Iris setosa, Iris virginica, and Iris versicolor. Each sample is comprised of 4 measurments or *features* - sepal length, sepal width, petal length, and petal width. Our objective is to train a K Nearest Neighbors classifier to determine the species of Iris flower from a set of unknown samples. KNN is an intuitive algorithm that is easy to understand for most beginners. Let's get started!
 
 ![Iris Flower Species](https://raw.githubusercontent.com/RubixML/Iris/master/docs/images/iris-species.png)
 
 ### Extracting the Data
-Before we can train the K Nearest Neighbors learner, we need to import the data from `dataset.csv` into a dataset object. We'll use the League of Extraordinary PHP packages' [CSV Reader](https://csv.thephpleague.com/) to help us import the data. The return values of the `getRecords()` and `fetchColumn()` methods are iterators which we'll load into a [Labeled](https://docs.rubixml.com/en/latest/datasets/labeled.html) dataset.
+Before we can train the K Nearest Neighbors learner, we need to import the data from `dataset.csv` into our script. We'll use the League of Extraordinary PHP packages' [CSV Reader](https://csv.thephpleague.com/) to help us import the data. The return values of the `getRecords()` and `fetchColumn()` methods are iterators which we'll load into a [Labeled](https://docs.rubixml.com/en/latest/datasets/labeled.html) dataset.
 
 > **Note:** The source code for this example can be found in the [train.php](https://github.com/RubixML/Iris/blob/master/train.php) file in project root.
 
@@ -44,8 +44,7 @@ $samples = $reader->getRecords([
 $labels = $reader->fetchColumn('class');
 ```
 
-### Dataset Preparation
-Then load the samples and labels into a Labeled dataset object by passing them to the `fromIterator()` static factory method.
+Then, load the samples and labels into a Labeled dataset object by passing them to the `fromIterator()` static factory method.
 
 ```php
 use Rubix\ML\Datasets\Labeled;
@@ -53,6 +52,7 @@ use Rubix\ML\Datasets\Labeled;
 $dataset = Labeled::fromIterator($samples, $labels);
 ```
 
+### Dataset Preparation
 Since the data from CSV are imported as string types by default, we'll need to convert those features to their numerical representations before proceeding. Luckily, Rubix ML provides the [Numeric String Converter](https://docs.rubixml.com/en/latest/transformers/numeric-string-converter.html) transformer that can be applied directly to the newly instantiated dataset object that will handle this for us.
 
 ```php
@@ -61,14 +61,14 @@ use Rubix\ML\Transformers\NumericStringConverter;
 $dataset->apply(new NumericStringConverter());
 ```
 
-Before we train the learner, we'll set 10 random samples aside that we'll later use to make some example predictions and score the model. The `randomize()` method on the dataset object will handle shuffling the data while `take()` pulls the first n rows from the dataset and puts them into a separate dataset object. For this example, we'll use 10 of the 150 samples for our testing set.
+In addition, we'll set aside 10 random samples that we'll later use to make some example predictions and score the model. The `randomize()` method on the dataset object will handle shuffling the data while `take()` pulls the first n rows from the dataset and puts them into a separate dataset object. For this example, we'll use 10 of the 150 samples in the dataset for our testing set.
 
 ```php
 $testing = $dataset->randomize()->take(10);
 ```
 
 ### Instantiating the Learner
-Next we'll instantiate the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) classifier instance. KNN is a distance-based algorithm that finds the k closest samples from the training set and takes the most frequent label as the prediction. For example, if we choose k equal to 5, then we may get 4 labels that are Iris-setosa and 1 labeled Iris-virginica. In this case, the estimator would predict Iris-setosa with 80% certainty.
+Next we'll instantiate the [K Nearest Neighbors](https://docs.rubixml.com/en/latest/classifiers/k-nearest-neighbors.html) classifier instance and choose its hyper-parameters. KNN is a distance-based algorithm that finds the k closest samples from the training set and takes the most frequent label as the prediction. For example, if we choose k equal to 5, then we may get 4 labels that are Iris-setosa and 1 labeled Iris-virginica. In this case, the estimator would predict Iris-setosa with 80% certainty.
 
 ```php
 use Rubix\ML\Classifiers\KNearestNeighbors;
@@ -86,13 +86,13 @@ $estimator->train($dataset);
 ```
 
 ### Inference
-Then we can make the predictions on the testing portion of the dataset set aside earlier by calling `predict()`.
+Now, we can make the predictions on the testing portion of the dataset set aside earlier by calling `predict()` with the testing set.
 
 ```php
 $predictions = $estimator->predict($testing);
 ```
 
-During inference, the KNN algorithm interprets the features as spatial coordinates and uses the *distance* between samples to determine the k most similar samples from the data it has already seen before. As you can see from the visualization below, each species of Iris flower is within a distict cluster. In such a case, if an unknown sample falls within a cluster, it will be assigned that cluster's label.
+During inference, the KNN algorithm interprets the features as spatial coordinates and uses the *distance* between samples to determine the k most similar samples from the data it has already seen. As you can see from the visualization below, each species of Iris flower is within a distict cluster. In such a case, if an unknown sample falls within a cluster, it will be assigned that cluster's label.
 
 ![Iris Dataset 3D Plot](https://raw.githubusercontent.com/RubixML/Iris/master/docs/images/iris-dataset-3d-plot.png)
 
@@ -131,5 +131,5 @@ Contact: Michael Marshall
 Email: (1) MARSHALL%PLU '@' io.arc.nasa.gov
 
 ### References
->- [1] R. A. Fisher. (1936). The use of multiple measurements in taxonomic problems.
->- [2] Dua, D. and Graff, C. (2019). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science.
+>- R. A. Fisher. (1936). The use of multiple measurements in taxonomic problems.
+>- Dua, D. and Graff, C. (2019). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science.
