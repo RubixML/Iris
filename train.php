@@ -3,8 +3,8 @@
 include __DIR__ . '/vendor/autoload.php';
 
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Classifiers\KNearestNeighbors;
 use Rubix\ML\Transformers\NumericStringConverter;
+use Rubix\ML\Classifiers\KNearestNeighbors;
 use Rubix\ML\CrossValidation\Metrics\Accuracy;
 use League\Csv\Reader;
 
@@ -29,15 +29,15 @@ $estimator = new KNearestNeighbors(5);
 
 $estimator->train($dataset);
 
-$metric = new Accuracy();
-
 $predictions = $estimator->predict($testing);
 
 echo 'Example predictions:' . PHP_EOL;
 
 print_r(array_slice($predictions, 0, 3));
 
+$metric = new Accuracy();
+
 $score = $metric->score($predictions, $testing->labels());
 
-echo "Accuracy: $score" . PHP_EOL;
+echo "Accuracy is $score" . PHP_EOL;
 
