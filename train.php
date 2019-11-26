@@ -27,7 +27,11 @@ $testing = $dataset->randomize()->take(10);
 
 $estimator = new KNearestNeighbors(5);
 
+echo 'Training ...' . PHP_EOL;
+
 $estimator->train($dataset);
+
+echo 'Making predictions ...' . PHP_EOL;
 
 $predictions = $estimator->predict($testing);
 
