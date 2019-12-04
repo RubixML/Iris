@@ -34,8 +34,7 @@ Before we can train the learner, we must import the data from the `dataset.csv` 
 ```php
 use League\Csv\Reader;
 
-$reader = Reader::createFromPath('dataset.csv')
-    ->setDelimiter(',')->setEnclosure('"')->setHeaderOffset(0);
+$reader = Reader::createFromPath('dataset.csv')->setHeaderOffset(0);
 
 $samples = $reader->getRecords([
     'septal-length', 'sepal-with', 'petal-length', 'petal-width',

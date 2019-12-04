@@ -10,8 +10,7 @@ use League\Csv\Reader;
 
 echo 'Loading data into memory ...' . PHP_EOL;
 
-$reader = Reader::createFromPath('dataset.csv')
-    ->setDelimiter(',')->setEnclosure('"')->setHeaderOffset(0);
+$reader = Reader::createFromPath('dataset.csv')->setHeaderOffset(0);
 
 $samples = $reader->getRecords([
     'septal-length', 'sepal-with', 'petal-length', 'petal-width',
