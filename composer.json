@@ -18,7 +18,7 @@
     ],
     "require": {
         "php": ">=7.2",
-        "rubix/ml": "^0.0.18-beta"
+        "rubix/ml": "^0.0.19-beta"
     },
     "config": {
         "preferred-install": "dist",
