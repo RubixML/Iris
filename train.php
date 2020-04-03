@@ -31,4 +31,4 @@ $metric = new Accuracy();
 
 $score = $metric->score($predictions, $testing->labels());
 
-echo "Accuracy is $score" . PHP_EOL;
+echo 'Accuracy is ' . (string) ($score * 100.0) . '%' . PHP_EOL;
