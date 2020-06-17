@@ -3,7 +3,9 @@ A lightweight introduction to machine learning in Rubix ML using the famous [Iri
 
 - **Difficulty**: Easy
 - **Training time**: Seconds
-- **Memory needed**: < 1G
+
+## Requirements
+- [PHP](https://php.net) 7.2 or above
 
 ## Installation
 Clone the repository locally using [Git](https://git-scm.com/):
@@ -15,9 +17,6 @@ Install dependencies using [Composer](https://getcomposer.org/):
 ```sh
 $ composer install
 ```
-
-## Requirements
-- [PHP](https://php.net) 7.2 or above
 
 ## Tutorial
 
@@ -101,3 +100,6 @@ Email: (1) MARSHALL%PLU '@' io.arc.nasa.gov
 ### References
 >- R. A. Fisher. (1936). The use of multiple measurements in taxonomic problems.
 >- Dua, D. and Graff, C. (2019). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science.
+
+## License
+The code is licensed [Apache 2.0](LICENSE.md) and the tutorial is licensed [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
