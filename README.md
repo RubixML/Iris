@@ -2,21 +2,16 @@
 A lightweight introduction to machine learning in Rubix ML using the famous [Iris dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set) and the K Nearest Neighbors algorithm. By the end of this tutorial, you'll know how to structure a project, instantiate a learner, and train it to make predictions on some test data.
 
 - **Difficulty**: Easy
-- **Training time**: Seconds
+- **Training time**: Less than a minute
+
+## Installation
+Clone the project locally using [Composer](https://getcomposer.org/):
+```sh
+$ composer create-project rubix/iris
+```
 
 ## Requirements
 - [PHP](https://php.net) 7.2 or above
-
-## Installation
-Clone the repository locally using [Git](https://git-scm.com/):
-```sh
-$ git clone https://github.com/RubixML/Iris
-```
-
-Install dependencies using [Composer](https://getcomposer.org/):
-```sh
-$ composer install
-```
 
 ## Tutorial
 
@@ -80,13 +75,18 @@ $metric = new Accuracy();
 
 $score = $metric->score($predictions, $testing->labels());
 
-echo "Accuracy is $score" . PHP_EOL;
+echo 'Accuracy is ' . (string) ($score * 100.0) . '%' . PHP_EOL;
+```
+
+Now you're ready to run the training script from the command line.
+```sh
+php train.php
 ```
 
 **Output**
 
 ```sh
-Accuracy is 0.9
+Accuracy is 90%
 ```
 
 ### Next Steps
