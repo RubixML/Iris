@@ -12,14 +12,13 @@
     "authors": [
         {
             "name": "Andrew DalPino",
-            "email": "me@andrewdalpino.com",
-            "homepage": "https://andrewdalpino.com",
+            "homepage": "https://github.com/andrewdalpino",
             "role": "Lead Engineer"
         }
     ],
     "require": {
         "php": ">=7.2",
-        "rubix/ml": "^0.1.0-rc2"
+        "rubix/ml": "^0.3.0"
     },
     "scripts": {
         "train": "@php train.php"
