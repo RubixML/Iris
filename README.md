@@ -11,7 +11,7 @@ $ composer create-project rubix/iris
 ```
 
 ## Requirements
-- [PHP](https://php.net) 7.2 or above
+- [PHP](https://php.net) 7.4 or above
 
 ## Tutorial
 
@@ -74,19 +74,11 @@ use Rubix\ML\CrossValidation\Metrics\Accuracy;
 $metric = new Accuracy();
 
 $score = $metric->score($predictions, $testing->labels());
-
-echo 'Accuracy is ' . (string) ($score * 100.0) . '%' . PHP_EOL;
 ```
 
 Now you're ready to run the training script from the command line.
 ```sh
 php train.php
-```
-
-**Output**
-
-```sh
-Accuracy is 90%
 ```
 
 ### Next Steps
