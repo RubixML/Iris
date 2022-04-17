@@ -3,7 +3,7 @@
     "type": "project",
     "description": "An introduction to machine learning in Rubix ML using the famous Iris dataset and the K Nearest Neighbors classifier.",
     "homepage": "https://github.com/RubixML/Iris",
-    "license": "Apache-2.0",
+    "license": "MIT",
     "keywords": [
         "classification", "cross validation", "dataset", "data science", "example project",
         "iris flower", "k nearest neighbors", "knn", "machine learning", "ml", "php", "php ml",
@@ -18,7 +18,7 @@
     ],
     "require": {
         "php": ">=7.4",
-        "rubix/ml": "^1.0"
+        "rubix/ml": "^2.0"
     },
     "scripts": {
         "train": "@php train.php"
