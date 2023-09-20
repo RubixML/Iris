@@ -7,6 +7,8 @@ use Rubix\ML\Datasets\Labeled;
 use Rubix\ML\Extractors\CSV;
 use Rubix\ML\Extractors\NDJSON;
 use Rubix\ML\Persisters\Filesystem;
+use Rubix\ML\Transformers\PrincipalComponentAnalysis;
+use Rubix\ML\Transformers\LinearDiscriminantAnalysis;
 use Rubix\ML\Transformers\TruncatedSVD;
 
 ini_set('memory_limit', '-1');
@@ -25,7 +27,13 @@ $stats->toJSON()->saveTo(new Filesystem('stats.json'));
 
 $logger->info('Stats saved to stats.json');
 
-$dataset->apply(new TruncatedSVD(2))
-    ->exportTo(new CSV('embedding.csv'));
+$dataset->apply(new PrincipalComponentAnalysis(2))
+    ->exportTo(new CSV('pca.csv'));
 
-$logger->info('Embedding saved to embedding.csv');
+$dataset->apply(new LinearDiscriminantAnalysis(2))
+    ->exportTo(new CSV('lda.csv'));
+
+$dataset->apply(new TruncatedSVD(2))
+    ->exportTo(new CSV('svd.csv'));
+
+$logger->info('Embeddings saved to pca.csv, lda.csv, and svd.csv');

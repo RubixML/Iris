@@ -1,4 +1,6 @@
-embedding.csv
+pca.csv
+lda.csv
+svd.csv
 stats.json
 
 /vendor
