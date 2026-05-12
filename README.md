@@ -81,6 +81,36 @@ Now you're ready to run the training script from the command line.
 php train.php
 ```
 
+### Recap all in one snippet:
+
+```php
+
+use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Extractors\NDJSON;
+use Rubix\ML\Classifiers\KNearestNeighbors;
+use Rubix\ML\CrossValidation\Metrics\Accuracy;
+
+$training = Labeled::fromIterator(new NDJSON('dataset.ndjson'));
+
+$testing = $dataset->randomize()->take(10);
+
+$estimator = new KNearestNeighbors(5);
+
+$estimator->train($training);
+
+$predictions = $estimator->predict($testing);
+
+$metric = new Accuracy();
+
+$score = $metric->score($predictions, $testing->labels());
+
+```
+
+Now you're ready to run the training script from the command line.
+```sh
+php train.php
+```
+
 ### Next Steps
 Congratulations on completing the introduction to machine learning in PHP with Rubix ML using the Iris dataset. Now you're ready to experiment on your own. For example, you may want to try different values of `k` or swap out the default [Euclidean](https://rubixml.github.io/ML//latest/kernels/distance/euclidean.html) distance kernel for another one such as [Manhattan](https://rubixml.github.io/ML//latest/kernels/distance/manhattan.html) or [Minkowski](https://rubixml.github.io/ML//latest/kernels/distance/minkowski.html).
 
