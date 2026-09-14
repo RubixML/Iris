@@ -1,44 +1,50 @@
 # Rubix ML - Iris Flower Classifier
+
 A lightweight introduction to machine learning in Rubix ML using the famous [Iris dataset](https://en.wikipedia.org/wiki/Iris_flower_data_set) and the K Nearest Neighbors algorithm. By the end of this tutorial, you'll know how to structure a project, instantiate a learner, and train it to make predictions on some test data.
 
-- **Difficulty**: Easy
-- **Training time**: Less than a minute
-
 ## Installation
+
 Clone the project locally using [Composer](https://getcomposer.org/):
+
 ```sh
 $ composer create-project rubix/iris
 ```
 
 ## Requirements
-- [PHP](https://php.net) 7.4 or above
+
+- [PHP](https://php.net) 8.3 or above
 
 ## Tutorial
 
 ### Introduction
+
 The Iris dataset consists of 50 samples for each of three species of Iris flower - Iris setosa, Iris virginica, and Iris versicolor (pictured below). Each sample is comprised of 4 measurements or *features* - sepal length, sepal width, petal length, and petal width. Our objective is to train a [K Nearest Neighbors](https://rubixml.github.io/ML//latest/classifiers/k-nearest-neighbors.html) (KNN) classifier to determine the species of Iris flower from a set of unknown test samples using the Iris dataset. Let's get started!
 
 ![Iris Flower Species](https://raw.githubusercontent.com/RubixML/Iris/master/docs/images/iris-species.png)
 
 ### Extracting the Data
-The first step is to extract the Iris dataset from the `dataset.ndjson` file in our project folder into our training script. You'll notice that we've provided the Iris dataset in CSV (Comma-separated Values) format as well. This is strictly for convenience in case you wanted to view the dataset in your favorite spreadsheet software. To instantiate a new [Labeled](https://rubixml.github.io/ML//latest/datasets/labeled.html) dataset object we'll pass an [NDJSON](https://rubixml.github.io/ML//latest/extractors/ndjson.html) extractor pointing to the dataset file in our project folder to the `fromIterator()` factory method. The factory uses the last column of the data table for the labels and the rest of the columns for the values of the sample features. We'll call this our *training* set.
+
+The first step is to extract the Iris dataset from the `dataset.csv` file in our project folder into our training script. We'll pass a [CSV](https://rubixml.github.io/ML//latest/extractors/csv.html) extractor pointing to the dataset file to the `fromIterator()` factory method to instantiate a new [Labeled](https://rubixml.github.io/ML//latest/datasets/labeled.html) dataset object. We set `header: true` to let the extractor read the first row as the column names. Because a CSV extractor reads every value in the file as a string, we then apply a [FloatTypeConverter](https://rubixml.github.io/ML//latest/transformers/float-type-converter.html) transformer to cast the feature values to the data types we want. The factory uses the last column of the data table for the labels and the rest of the columns for the values of the sample features. We'll call this our *training* set.
 
 > **Note:** The source code for this example can be found in the [train.php](https://github.com/RubixML/Iris/blob/master/train.php) file in project root.
 
 ```php
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Extractors\NDJSON;
+use Rubix\ML\Extractors\CSV;
+use Rubix\ML\Transformers\FloatTypeConverter;
 
-$training = Labeled::fromIterator(new NDJSON('dataset.ndjson'));
+$training = Labeled::fromIterator(new CSV('dataset.csv', header: true))
+    ->apply(new FloatTypeConverter());
 ```
 
 Next, we'll set aside 10 random samples that we'll use later to make some example predictions and score the model. The `randomize()` method on the dataset object will handle shuffling the data to ensure randomness and the `take()` method pulls the first *n* rows from the training set and puts them into a separate dataset object. We do this because we want to test the model on samples that it hasn't been trained with.
 
 ```php
-$testing = $dataset->randomize()->take(10);
+$testing = $training->randomize()->take(10);
 ```
 
 ### Instantiating the Learner
+
 Next, we'll instantiate the [K Nearest Neighbors](https://rubixml.github.io/ML//latest/classifiers/k-nearest-neighbors.html) classifier and choose the value of the `k` hyper-parameter. Hyper-parameters are constructor parameters that effect the behavior of the learner during training and inference. KNN is a distance-based algorithm that finds the *k* closest samples from the training set and predicts the label that is most common. For example, if we choose `k` equal to 5, then we may get 4 labels that are `Iris setosa` and 1 that is `Iris virginica`. In this case, the estimator would predict Iris-setosa because that is the most common label. To instantiate the learner, pass the value of hyper-parameter `k` to the constructor of the learner. Refer to the docs for more info on KNN's additional hyper-parameters.
 
 ```php
@@ -48,6 +54,7 @@ $estimator = new KNearestNeighbors(5);
 ```
 
 ### Training
+
 Now, we're ready to train the learner by calling the `train()` method with the training set we prepared earlier.
 
 ```php
@@ -55,6 +62,7 @@ $estimator->train($training);
 ```
 
 ### Making Predictions
+
 With the model trained, we can make predictions using the testing data by calling the `predict()` method on the testing set.
 
 ```php
@@ -66,6 +74,7 @@ During inference, the KNN algorithm interprets the features of the samples as sp
 ![Iris Dataset 3D Plot](https://raw.githubusercontent.com/RubixML/Iris/master/docs/images/iris-dataset-3d-plot.png)
 
 ### Validation Score
+
 We can test the model generated during training by comparing the predictions it makes to the ground-truth labels from the testing set. We'll need to choose a cross validation [Metric](https://rubixml.github.io/ML//latest/cross-validation/metrics/api.html) to output a score that we'll interpret as the generalization ability of our newly trained estimator. The [Accuracy](https://rubixml.github.io/ML//latest/cross-validation/metrics/accuracy.html) is a simple classification metric that ranges from 0 to 1 and is calculated as the number of correct predictions to the total number of predictions. To obtain the accuracy score, pass the predictions we generated from the model earlier along with the labels from the testing set to the `score` method on the metric instance.
 
 ```php
@@ -77,22 +86,25 @@ $score = $metric->score($predictions, $testing->labels());
 ```
 
 Now you're ready to run the training script from the command line.
+
 ```sh
 php train.php
 ```
 
-### Recap all in one snippet:
+### Recap all in one snippet
 
 ```php
 
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Extractors\NDJSON;
+use Rubix\ML\Extractors\CSV;
+use Rubix\ML\Transformers\FloatTypeConverter;
 use Rubix\ML\Classifiers\KNearestNeighbors;
 use Rubix\ML\CrossValidation\Metrics\Accuracy;
 
-$training = Labeled::fromIterator(new NDJSON('dataset.ndjson'));
+$training = Labeled::fromIterator(new CSV('dataset.csv', header: true))
+    ->apply(new FloatTypeConverter());
 
-$testing = $dataset->randomize()->take(10);
+$testing = $training->randomize()->take(10);
 
 $estimator = new KNearestNeighbors(5);
 
@@ -107,21 +119,57 @@ $score = $metric->score($predictions, $testing->labels());
 ```
 
 Now you're ready to run the training script from the command line.
+
 ```sh
 php train.php
 ```
 
 ### Next Steps
+
 Congratulations on completing the introduction to machine learning in PHP with Rubix ML using the Iris dataset. Now you're ready to experiment on your own. For example, you may want to try different values of `k` or swap out the default [Euclidean](https://rubixml.github.io/ML//latest/kernels/distance/euclidean.html) distance kernel for another one such as [Manhattan](https://rubixml.github.io/ML//latest/kernels/distance/manhattan.html) or [Minkowski](https://rubixml.github.io/ML//latest/kernels/distance/minkowski.html).
 
+## Exploring the Data
+
+If you'd like to visualize how the species cluster together in feature space, the `explore.php` script in the project root uses the [t-SNE](https://rubixml.github.io/ML//latest/transformers/t-sne.html) algorithm to embed the dataset into a 2D space and writes the result to the `embeddings.csv` file. Just as before, we extract the data from `dataset.csv` using a [CSV](https://rubixml.github.io/ML//latest/extractors/csv.html) extractor and cast the feature values with a [FloatTypeConverter](https://rubixml.github.io/ML//latest/transformers/float-type-converter.html) transformer.
+
+> **Note:** The source code for this example can be found in the [explore.php](https://github.com/RubixML/Iris/blob/master/explore.php) file in project root. t-SNE is a stochastic, non-deterministic algorithm, so your results will differ slightly on each run.
+
+```php
+use Rubix\ML\Loggers\Screen;
+use Rubix\ML\Datasets\Labeled;
+use Rubix\ML\Extractors\CSV;
+use Rubix\ML\Transformers\FloatTypeConverter;
+use Rubix\ML\Transformers\TSNE;
+
+$logger = new Screen();
+
+$dataset = Labeled::fromIterator(new CSV('dataset.csv', header: true))
+    ->apply(new FloatTypeConverter());
+
+$embedder = new TSNE(2, 100.0, perplexity: 10, exaggeration: 6.0, epochs: 1000);
+
+$embedder->setLogger($logger);
+
+$dataset->apply($embedder)->exportTo(new CSV('embeddings.csv'));
+```
+
+Run the exploration script from the command line.
+
+```sh
+php explore.php
+```
+
 ## Original Dataset
+
 Creator: Ronald Fisher
 Contact: Michael Marshall
 Email: (1) MARSHALL%PLU '@' io.arc.nasa.gov
 
 ### References
+
 >- R. A. Fisher. (1936). The use of multiple measurements in taxonomic problems.
 >- Dua, D. and Graff, C. (2019). UCI Machine Learning Repository [http://archive.ics.uci.edu/ml]. Irvine, CA: University of California, School of Information and Computer Science.
 
 ## License
+
 The code is licensed [MIT](LICENSE) and the tutorial is licensed [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).

@@ -4,15 +4,17 @@ include __DIR__ . '/vendor/autoload.php';
 
 use Rubix\ML\Loggers\Screen;
 use Rubix\ML\Datasets\Labeled;
-use Rubix\ML\Extractors\NDJSON;
+use Rubix\ML\Extractors\CSV;
 use Rubix\ML\Classifiers\KNearestNeighbors;
 use Rubix\ML\CrossValidation\Metrics\Accuracy;
+use Rubix\ML\Transformers\FloatTypeConverter;
 
 $logger = new Screen();
 
 $logger->info('Loading data into memory');
 
-$training = Labeled::fromIterator(new NDJSON('dataset.ndjson'));
+$training = Labeled::fromIterator(new CSV('dataset.csv', header: true))
+    ->apply(new FloatTypeConverter());
 
 $testing = $training->randomize()->take(10);
 
@@ -30,4 +32,4 @@ $metric = new Accuracy();
 
 $score = $metric->score($predictions, $testing->labels());
 
-$logger->info("Accuracy is $score");
+$logger->info("Accuracy is {$score}");

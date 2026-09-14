@@ -1,10 +1,6 @@
-pca.csv
-lda.csv
-svd.csv
-stats.json
-
 /vendor
 composer.lock
 report.json
+embeddings.csv
 .vscode
 .vs
